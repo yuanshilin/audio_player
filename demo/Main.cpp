@@ -7,32 +7,39 @@
 #endif
 
 #include "AudioDevice.h"
-
 #include "Decoders.h"
 //#include "Encoders.h"
+
+#if ANDROID
+#include "AndroidDevice.h"
+#else
+#include "LinuxDevice.h"
+#endif
 
 #include <thread>
 
 using namespace nqr;
 
-int main(int argc, const char **argv) try
-{
+int main(int argc, const char **argv) try {
 
     const int desiredSampleRate = 44100;
     const int desiredChannelCount = 2;
-    AudioDevice myDevice(desiredChannelCount, desiredSampleRate);
+//    AudioDevice myDevice(desiredChannelCount, desiredSampleRate);
+    AudioDevice* pDevice = nullptr;
+#if ANDROID
+    pDevice = new AndroidDevice(desiredChannelCount, desiredSampleRate,0);
+#else
+    pDevice = new LinuxDevice(desiredChannelCount, desiredSampleRate,0);
+#endif //标志结束#if
 
     std::shared_ptr<AudioData> fileData = std::make_shared<AudioData>();
 
     NyquistIO loader;
 
-    if (argc > 1)
-    {
+    if (argc > 1) {
         std::string cli_arg = std::string(argv[1]);
         loader.Load(fileData.get(), cli_arg);
-    }
-    else
-    {
+    } else {
         // Circular libnyquist testing
         //loader.Load(fileData.get(), "libnyquist_example_output.opus");
 
@@ -112,31 +119,28 @@ int main(int argc, const char **argv) try
     myDevice.Record(fileData->sampleRate * fileData->lengthSeconds, fileData->samples);
     */
 
-    if (fileData->sampleRate != desiredSampleRate)
-    {
-        std::cout << "[Warning - Sample Rate Mismatch] - file is sampled at " << fileData->sampleRate << " and output is " << desiredSampleRate << std::endl;
+    if (fileData->sampleRate != desiredSampleRate) {
+        std::cout << "[Warning - Sample Rate Mismatch] - file is sampled at " << fileData->sampleRate
+                  << " and output is " << desiredSampleRate << std::endl;
     }
 
     std::cout << "Input Samples: " << fileData->samples.size() << std::endl;
 
     // Convert mono to stereo for testing playback
-    if (fileData->channelCount == 1)
-    {
+    if (fileData->channelCount == 1) {
         std::cout << "Playing MONO for: " << fileData->lengthSeconds << " seconds..." << std::endl;
         std::vector<float> stereoCopy(fileData->samples.size() * 2);
         MonoToStereo(fileData->samples.data(), stereoCopy.data(), fileData->samples.size());
-        myDevice.Play(stereoCopy);
-    }
-    else if (fileData->channelCount == 2)
-    {
+        pDevice->Play(stereoCopy);
+    } else if (fileData->channelCount == 2) {
         std::cout << "Playing STEREO for: " << fileData->lengthSeconds << " seconds..." << std::endl;
-        myDevice.Play(fileData->samples);
+        pDevice->Play(fileData->samples);
     } else if (fileData->channelCount == 6) {
         std::cout << "Playing 5.1 for: " << fileData->lengthSeconds << " seconds..." << std::endl;
-        myDevice.Play(fileData->samples);
-    }else {
+        pDevice->Play(fileData->samples);
+    } else {
         std::cout << "Playing 7.1 for: " << fileData->lengthSeconds << " seconds..." << std::endl;
-        myDevice.Play(fileData->samples);
+        pDevice->Play(fileData->samples);
     }
 
     // Test Opus Encoding
@@ -155,19 +159,15 @@ int main(int argc, const char **argv) try
 
     return EXIT_SUCCESS;
 }
-catch (const UnsupportedExtensionEx & e)
-{
+catch (const UnsupportedExtensionEx &e) {
     std::cerr << "Caught: " << e.what() << std::endl;
 }
-catch (const LoadPathNotImplEx & e)
-{
+catch (const LoadPathNotImplEx &e) {
     std::cerr << "Caught: " << e.what() << std::endl;
 }
-catch (const LoadBufferNotImplEx & e)
-{
+catch (const LoadBufferNotImplEx &e) {
     std::cerr << "Caught: " << e.what() << std::endl;
 }
-catch (const std::exception & e)
-{
+catch (const std::exception &e) {
     std::cerr << "Caught: " << e.what() << std::endl;
 }

@@ -55,9 +55,9 @@ file(GLOB third_wavpack_src "${CMAKE_CURRENT_SOURCE_DIR}/src/*")
 
 
 if (CMAKE_SYSTEM_NAME MATCHES "Android")
-    set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../out/android/lib/${ANDROID_ABI})
+    set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../out/android/lib/${ANDROID_ABI})
 else ()
-    set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../out/lib)
+    set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../out/lib)
 endif ()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${lib_output_path})

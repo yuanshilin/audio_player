@@ -32,34 +32,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 static RingBufferT<float> buffer(BUFFER_LENGTH);
 
-AudioDevice::AudioDevice(int numChannels, int sampleRate, int deviceId)
-{
-//    rtaudio = std::unique_ptr<RtAudio>(new RtAudio);
-//    info.id = (deviceId != -1) ? deviceId : rtaudio->getDefaultOutputDevice();
-    info.numChannels = numChannels;
-    info.sampleRate = sampleRate;
-    info.frameSize = FRAME_SIZE;
+AudioDevice::AudioDevice(uint32_t numChannels, uint32_t sampleRate, uint32_t frameSize) {
+    _info.numChannels = numChannels;
+    _info.sampleRate = sampleRate;
+    _info.frameSize = frameSize;
 }
 
-AudioDevice::~AudioDevice()
-{
+AudioDevice::~AudioDevice() {
 
 }
 
-
-bool AudioDevice::Play(const std::vector<float> & data)
-{
-
-    // Each frame is the (size/2) cause interleaved channels!
-//    int sizeInFrames = ((int) data.size()) / (BUFFER_LENGTH);
-//
-//    int writeCount = 0;
-//
-//    while (writeCount < sizeInFrames)
-//    {
-//        bool status = buffer.write((data.data() + (writeCount * BUFFER_LENGTH)), BUFFER_LENGTH);
-//        if (status) writeCount++;
-//    }
-    return true;
-}
 

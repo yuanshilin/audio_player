@@ -1,6 +1,19 @@
 cmake_minimum_required(VERSION 3.2.0)
 project(WAV_DEMO)
 
+
+include_directories(
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/../src
+)
+
+
+set(SRC ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/AudioDevice.cpp)
+
+set(EXAMPLE_APP_NAME "wav-examples")
+
+
 if (CMAKE_SYSTEM_NAME MATCHES "Android")
     # xxx: -flto can't be used on NDK with gnustl_shared
     if (ANDROID_STL MATCHES "gnustl_shared")
@@ -15,10 +28,17 @@ if (CMAKE_SYSTEM_NAME MATCHES "Android")
     add_definitions("-fdata-sections -ffunction-sections")
     # string(APPEND CMAKE_CXX_FLAGS "-Qunused-arguments")
     set(UNIX_OS true)
+    set(SRC ${SRC}
+            ${CMAKE_CURRENT_SOURCE_DIR}/AndroidDevice.cpp)
+
 elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
     #	add_definitions("-Wno-invalid-source-encoding")
     add_definitions("-O2")
     set(UNIX_OS true)
+    add_definitions("-DLINUX")
+    set(SRC ${SRC}
+            ${CMAKE_CURRENT_SOURCE_DIR}/LinuxDevice.cpp)
+
 elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     add_definitions("-Wno-invalid-source-encoding")
     add_definitions("-fdata-sections -ffunction-sections")
@@ -32,22 +52,13 @@ else ()
     message(FATAL_ERROR "unknown CMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME}")
 endif ()
 
-
-include_directories(
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/../src
-)
-
-set(EXAMPLE_APP_NAME "wav-examples")
-
-
 if (${UNIX_OS})
     add_definitions(
             "-W"
             "-fPIC"
             "-Wall"
-#            "-Werror"
-#            "-Wshadow"
+            #            "-Werror"
+            #            "-Wshadow"
             "-Wformat"
             "-Wpointer-arith"
             "-D_REENTRANT"
@@ -79,8 +90,6 @@ endif ()
 
 set(EXECUTABLE_OUTPUT_PATH ${exe_output_path})
 
-set(SRC ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/AudioDevice.cpp)
 #
 link_libraries(${lib_output_path}/libwav.a ${lib_output_path}/libwavpack.a)
 

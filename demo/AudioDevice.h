@@ -37,26 +37,29 @@ static const uint32_t FRAME_SIZE = 512;
 static const int32_t CHANNELS = 2;
 static const int32_t BUFFER_LENGTH = FRAME_SIZE * CHANNELS;
 
-struct AudioDeviceInfo
-{
-    uint32_t id;
+struct AudioDeviceInfo {
+//    uint32_t id;
     uint32_t numChannels;
     uint32_t sampleRate;
     uint32_t frameSize;
-    bool isPlaying = false;
+//    bool isPlaying = false;
 };
 
-class AudioDevice
-{
-protected:
-    AudioDevice(const AudioDevice& r) = delete;
-    AudioDevice & operator = (const AudioDevice& r) = delete;
+class AudioDevice {
 public:
-    AudioDeviceInfo info;
-    AudioDevice(int numChannels, int sampleRate, int deviceId = -1);
+    AudioDevice(uint32_t numChannels, uint32_t sampleRate, uint32_t frameSize);
+
     ~AudioDevice();
 
-    bool Play(const std::vector<float> & data);
+    virtual int Play(const std::vector<float> &data) = 0;
+
+protected:
+    AudioDeviceInfo _info;
+
+    AudioDevice(const AudioDevice &r) = delete;
+
+    AudioDevice &operator=(const AudioDevice &r) = delete;
+
 };
 
 #endif
