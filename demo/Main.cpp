@@ -22,23 +22,15 @@ using namespace nqr;
 
 int main(int argc, const char **argv) try {
 
-    const int desiredSampleRate = 44100;
-    const int desiredChannelCount = 2;
-//    AudioDevice myDevice(desiredChannelCount, desiredSampleRate);
-    AudioDevice* pDevice = nullptr;
-#if ANDROID
-    pDevice = new AndroidDevice(desiredChannelCount, desiredSampleRate,0);
-#else
-    pDevice = new LinuxDevice(desiredChannelCount, desiredSampleRate,0);
-#endif //标志结束#if
 
-    std::shared_ptr<AudioData> fileData = std::make_shared<AudioData>();
+    std::string file;
 
     NyquistIO loader;
 
     if (argc > 1) {
         std::string cli_arg = std::string(argv[1]);
-        loader.Load(fileData.get(), cli_arg);
+        file = cli_arg;
+//        loader.Load(fileData.get(), cli_arg);
     } else {
         // Circular libnyquist testing
         //loader.Load(fileData.get(), "libnyquist_example_output.opus");
@@ -62,8 +54,12 @@ int main(int argc, const char **argv) try {
 
         // Multi-channel wave
         //std::string file("/Users/frank/workspace/github/libnyquist/test_data/ad_hoc/6_channel_44k_16b.wav");
-        std::string file("/home/frank/media/7.1.wav");
-        loader.Load(fileData.get(), file);
+#if  ANDROID
+       file = std::string("/sdcard/7.1.wav");
+#else
+       file = std::string("/home/frank/media/7.1.wav");
+#endif
+
 
         // 1 + 2 channel ogg
         //loader.Load(fileData.get(), "test_data/ad_hoc/LR_Stereo.ogg");
@@ -109,6 +105,26 @@ int main(int argc, const char **argv) try {
         //loader.Load(fileData.get(), "mp3", memory.buffer);
     }
 
+
+    std::shared_ptr<AudioData> fileData = std::make_shared<AudioData>();
+
+    loader.Load(fileData.get(), file);
+
+    const int desiredSampleRate = fileData->sampleRate;
+    const int desiredChannelCount = fileData->channelCount;
+    const int frameSize = fileData->frameSize;
+
+    printf("file:%s sampleRate:%d channel:%d  frameSize:%d\n",
+            file.c_str(),desiredSampleRate, desiredChannelCount, frameSize);
+
+    AudioDevice* pDevice = nullptr;
+#if ANDROID
+    pDevice = new AndroidDevice(desiredChannelCount, desiredSampleRate,0);
+#else
+    pDevice = new LinuxDevice(desiredChannelCount, desiredSampleRate,frameSize);
+#endif //标志结束#if
+
+
     /* Test Recording Capabilities of AudioDevice
     fileData->samples.reserve(44100 * 5);
     fileData->channelCount = 1;
@@ -118,11 +134,6 @@ int main(int argc, const char **argv) try {
     std::cout << "Starting recording ..." << std::endl;
     myDevice.Record(fileData->sampleRate * fileData->lengthSeconds, fileData->samples);
     */
-
-    if (fileData->sampleRate != desiredSampleRate) {
-        std::cout << "[Warning - Sample Rate Mismatch] - file is sampled at " << fileData->sampleRate
-                  << " and output is " << desiredSampleRate << std::endl;
-    }
 
     std::cout << "Input Samples: " << fileData->samples.size() << std::endl;
 
