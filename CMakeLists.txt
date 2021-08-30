@@ -37,3 +37,4 @@ endif ()
 
 add_subdirectory(3rd/wavpack)
 add_subdirectory(src)
+add_subdirectory(demo)

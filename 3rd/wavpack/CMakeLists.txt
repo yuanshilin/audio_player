@@ -1,6 +1,6 @@
 # libwavpack
 cmake_minimum_required(VERSION 3.13.0)
-project(libwavpack)
+project(wavpack)
 
 if(MSVC)
     # Disable warning C4996 regarding fopen(), strcpy(), etc.
@@ -20,7 +20,17 @@ set(CMAKE_CXX_FLAGS "${_NQR_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
 
 file(GLOB third_wavpack_src "${CMAKE_CURRENT_SOURCE_DIR}/src/*")
 
-add_library(libwavpack STATIC ${third_wavpack_src})
+
+if (CMAKE_SYSTEM_NAME MATCHES "Android")
+    set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../out/android/lib/${ANDROID_ABI})
+else ()
+    set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../out/lib)
+endif ()
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${lib_output_path})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${lib_output_path})
+
+add_library(wavpack STATIC ${third_wavpack_src})
 
 #set_cxx_version(libwavpack)
 #_set_compile_options(libwavpack)
@@ -46,20 +56,20 @@ if (WIN32)
     _disable_warning(4703)
 endif()
 
-target_include_directories(libwavpack PRIVATE ${LIBNYQUIST_ROOT}/wavpack/include)
+target_include_directories(wavpack PRIVATE ${LIBNYQUIST_ROOT}/wavpack/include)
 
 if (MSVC_IDE)
-    set_target_properties(libwavpack PROPERTIES IMPORT_PREFIX "../..")
+    set_target_properties(wavpack PROPERTIES IMPORT_PREFIX "../..")
 endif()
 
-set_target_properties(libwavpack
+set_target_properties(wavpack
         PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
         ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
         )
 
-set_target_properties(libwavpack PROPERTIES OUTPUT_NAME_DEBUG libwavpack_d)
+#set_target_properties(libwavpack PROPERTIES OUTPUT_NAME_DEBUG libwavpack_d)
 
 #install(TARGETS libwavpack
 #        LIBRARY DESTINATION lib
@@ -67,3 +77,7 @@ set_target_properties(libwavpack PROPERTIES OUTPUT_NAME_DEBUG libwavpack_d)
 #        RUNTIME DESTINATION bin)
 #
 #install (TARGETS libwavpack DESTINATION lib)
+
+
+
+
