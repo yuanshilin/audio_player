@@ -51,16 +51,15 @@ bool AudioDevice::Play(const std::vector<float> & data)
 {
 
     // Each frame is the (size/2) cause interleaved channels!
-    int sizeInFrames = ((int) data.size()) / (BUFFER_LENGTH);
-
-    int writeCount = 0;
-
-    while (writeCount < sizeInFrames)
-    {
-        bool status = buffer.write((data.data() + (writeCount * BUFFER_LENGTH)), BUFFER_LENGTH);
-        if (status) writeCount++;
-    }
-
+//    int sizeInFrames = ((int) data.size()) / (BUFFER_LENGTH);
+//
+//    int writeCount = 0;
+//
+//    while (writeCount < sizeInFrames)
+//    {
+//        bool status = buffer.write((data.data() + (writeCount * BUFFER_LENGTH)), BUFFER_LENGTH);
+//        if (status) writeCount++;
+//    }
     return true;
 }
 

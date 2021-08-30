@@ -2,6 +2,39 @@
 cmake_minimum_required(VERSION 3.13.0)
 project(wavpack)
 
+
+#string(TOUPPER ${CMAKE_SYSTEM_NAME} CMAKE_SYSTEM_NAME)
+if (CMAKE_SYSTEM_NAME MATCHES "Android")
+    # xxx: -flto can't be used on NDK with gnustl_shared
+    if (ANDROID_STL MATCHES "gnustl_shared")
+        add_definitions("-Oz -g -DHAVE_NO_ATEXIT")
+    else ()
+        add_definitions("-O3 -flto")
+    endif ()
+
+    add_definitions("-DANDROID")
+    add_definitions("-Wno-unused-command-line-argument")
+    #	add_definitions("-Wno-invalid-source-encoding")
+    add_definitions("-fdata-sections -ffunction-sections")
+    # string(APPEND CMAKE_CXX_FLAGS "-Qunused-arguments")
+    set(UNIX_OS true)
+elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    #	add_definitions("-Wno-invalid-source-encoding")
+    add_definitions("-O2")
+    set(UNIX_OS true)
+elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    add_definitions("-Wno-invalid-source-encoding")
+    add_definitions("-fdata-sections -ffunction-sections")
+    add_definitions("-flto")
+    add_definitions("-Os")
+    set(UNIX_OS true)
+elseif (CMAKE_SYSTEM_NAME MATCHES "Windows")
+    set(CMAKE_SHARED_LINKER_FLAGS "/DYNAMICBASE ws2_32.lib")
+    set(WIN_OS true)
+else ()
+    message(FATAL_ERROR "unknown CMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME}")
+endif ()
+
 if(MSVC)
     # Disable warning C4996 regarding fopen(), strcpy(), etc.
     _add_define("_CRT_SECURE_NO_WARNINGS")
@@ -22,9 +55,9 @@ file(GLOB third_wavpack_src "${CMAKE_CURRENT_SOURCE_DIR}/src/*")
 
 
 if (CMAKE_SYSTEM_NAME MATCHES "Android")
-    set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../out/android/lib/${ANDROID_ABI})
+    set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../out/android/lib/${ANDROID_ABI})
 else ()
-    set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../out/lib)
+    set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../out/lib)
 endif ()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${lib_output_path})

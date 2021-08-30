@@ -141,12 +141,12 @@ int main(int argc, const char **argv) try
 
     // Test Opus Encoding
     {
-        // Resample
-        std::vector<float> outputBuffer;
-        std::cout << "Output Samples: " << outputBuffer.size() << std::endl;
-
-        outputBuffer.reserve(fileData->samples.size() * 2);
-        linear_resample(fileData->sampleRate / 48000.0f, fileData->samples, outputBuffer, (uint32_t)fileData->samples.size());
+//        // Resample
+//        std::vector<float> outputBuffer;
+//        std::cout << "Output Samples: " << outputBuffer.size() << std::endl;
+//
+//        outputBuffer.reserve(fileData->samples.size() * 2);
+//        linear_resample(fileData->sampleRate / 48000.0f, fileData->samples, outputBuffer, (uint32_t)fileData->samples.size());
 
 //        fileData->samples = outputBuffer;
 //        int encoderStatus = encode_opus_to_disk({ fileData->channelCount, PCM_FLT, DITHER_NONE }, fileData.get(), "libnyquist_example_output.opus");
