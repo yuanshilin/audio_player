@@ -67,7 +67,7 @@ if (${UNIX_OS})
             "-fPIC"
             "-Wall"
 #            "-Werror"
-            "-Wshadow"
+#            "-Wshadow"
             "-Wformat"
             "-Wpointer-arith"
             "-D_REENTRANT"

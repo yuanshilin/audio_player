@@ -55,7 +55,7 @@ int main(int argc, const char **argv) try
 
         // Multi-channel wave
         //std::string file("/Users/frank/workspace/github/libnyquist/test_data/ad_hoc/6_channel_44k_16b.wav");
-        std::string file("/Users/frank/mediafile/dobly/5.1wav格式.wav");
+        std::string file("/home/frank/media/7.1.wav");
         loader.Load(fileData.get(), file);
 
         // 1 + 2 channel ogg
@@ -131,8 +131,11 @@ int main(int argc, const char **argv) try
     {
         std::cout << "Playing STEREO for: " << fileData->lengthSeconds << " seconds..." << std::endl;
         myDevice.Play(fileData->samples);
-    } else {
+    } else if (fileData->channelCount == 6) {
         std::cout << "Playing 5.1 for: " << fileData->lengthSeconds << " seconds..." << std::endl;
+        myDevice.Play(fileData->samples);
+    }else {
+        std::cout << "Playing 7.1 for: " << fileData->lengthSeconds << " seconds..." << std::endl;
         myDevice.Play(fileData->samples);
     }
 
