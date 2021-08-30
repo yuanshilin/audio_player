@@ -1,0 +1,39 @@
+cmake_minimum_required(VERSION 3.13.0)
+project(wav)
+
+message(${CMAKE_SYSTEM_NAME})
+
+#enable_testing()
+
+set(CMAKE_CXX_STANDARD 11)
+
+#set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE Release CACHE STRING "set build type to release")
+
+if (${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_SOURCE_DIR})
+    message(FATAL_ERROR "Please into another dir to build!")
+endif ()
+
+#string(TOUPPER ${CMAKE_SYSTEM_NAME} CMAKE_SYSTEM_NAME)
+if (CMAKE_SYSTEM_NAME MATCHES "Android")
+    message(STATUS "current platform: Android")
+    message(STATUS "current ndk path: ${CMAKE_ANDROID_NDK}")
+elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    message(STATUS "current platform: Linux")
+elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    message(STATUS "current platform: Darwin")
+    set(CMAKE_MACOSX_RPATH build)
+elseif (CMAKE_SYSTEM_NAME MATCHES "Windows")
+    message(STATUS "current platform: Windows")
+else ()
+    message(FATAL_ERROR "unknown CMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME}")
+endif ()
+
+if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    set(CMAKE_MACOSX_RPATH build)
+endif ()
+
+#-------------------------------------------------------------------------------
+
+add_subdirectory(3rd/wavpack)
+add_subdirectory(src)
