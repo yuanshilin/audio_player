@@ -13,6 +13,9 @@ cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake \
 	../
 ```
 
+#### 内嵌在AOSP源码编译
+支持Android.mk编译
+
 
 
 #### 参考资料
