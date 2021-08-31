@@ -1,0 +1,30 @@
+cc_library_static {
+    name: "libwav",
+    vendor_available: true,
+    srcs: [
+        "src/*.c",
+    ],
+    cflags: [
+        "-Werror",
+        "-Wno-unused-parameter",
+        "-Wno-#warnings",
+        "-Wuninitialized",
+        "-Wno-self-assign",
+        "-Wno-implicit-fallthrough",
+    ],
+    sanitize: {
+        misc_undefined:[
+           "unsigned-integer-overflow",
+           "signed-integer-overflow",
+           "bounds",
+        ],
+        // Enable CFI if this becomes a shared library.
+        // cfi: true,
+    },
+    // shared_libs: [
+    //     "liblog",
+    // ],
+    export_include_dirs: [
+        "include",
+    ],
+}
