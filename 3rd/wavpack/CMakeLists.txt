@@ -60,10 +60,15 @@ else ()
     set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../out/lib)
 endif ()
 
+# 设置静态库的输出目录
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${lib_output_path})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${lib_output_path})
 
+# 设置动态库的输出目录
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${lib_output_path})
+
 add_library(wavpack STATIC ${third_wavpack_src})
+add_library(wavpack_so SHARED ${third_wavpack_src})
 
 #set_cxx_version(libwavpack)
 #_set_compile_options(libwavpack)

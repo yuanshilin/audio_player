@@ -91,7 +91,7 @@ endif ()
 set(EXECUTABLE_OUTPUT_PATH ${exe_output_path})
 
 #
-link_libraries(${lib_output_path}/libwav.a ${lib_output_path}/libwavpack.a)
-
+#link_libraries(${lib_output_path}/libwav.a ${lib_output_path}/libwavpack.a)
+link_libraries(${lib_output_path}/libwav_so.so ${lib_output_path}/libwavpack_so.so)
 
 add_executable(${EXAMPLE_APP_NAME} ${SRC})

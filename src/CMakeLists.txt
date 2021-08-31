@@ -98,5 +98,8 @@ endif ()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${lib_output_path})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${lib_output_path})
+# 设置动态库的输出目录
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${lib_output_path})
 
 add_library(wav STATIC ${lib_src})
+add_library(wav_so SHARED ${lib_src})
