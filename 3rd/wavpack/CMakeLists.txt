@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.13.0)
 project(wavpack)
 
 
+
+add_definitions("-fPIC")
+
 #string(TOUPPER ${CMAKE_SYSTEM_NAME} CMAKE_SYSTEM_NAME)
 if (CMAKE_SYSTEM_NAME MATCHES "Android")
     # xxx: -flto can't be used on NDK with gnustl_shared
@@ -67,8 +70,9 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${lib_output_path})
 # 设置动态库的输出目录
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${lib_output_path})
 
-add_library(wavpack STATIC ${third_wavpack_src})
-add_library(wavpack_so SHARED ${third_wavpack_src})
+#add_library(wavpack_so SHARED ${third_wavpack_src})
+add_library(wavpack_static STATIC ${third_wavpack_src})
+
 
 #set_cxx_version(libwavpack)
 #_set_compile_options(libwavpack)
@@ -94,13 +98,13 @@ if (WIN32)
     _disable_warning(4703)
 endif()
 
-target_include_directories(wavpack PRIVATE ${LIBNYQUIST_ROOT}/wavpack/include)
+target_include_directories(wavpack_static PRIVATE ${LIBNYQUIST_ROOT}/wavpack/include)
 
 if (MSVC_IDE)
-    set_target_properties(wavpack PROPERTIES IMPORT_PREFIX "../..")
+    set_target_properties(wavpack_static PROPERTIES IMPORT_PREFIX "../..")
 endif()
 
-set_target_properties(wavpack
+set_target_properties(wavpack_static
         PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
         ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"

@@ -6,6 +6,8 @@ project(wav_library)
 #set(CMAKE_BUILD_TYPE Release)
 #set(CMAKE_BUILD_TYPE Release CACHE STRING "set build type to release")
 
+add_definitions("-fPIC")
+
 if (${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
     message(FATAL_ERROR "Please into another dir to build!")
 endif ()
@@ -100,6 +102,12 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${lib_output_path})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${lib_output_path})
 # 设置动态库的输出目录
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${lib_output_path})
+#
+#add_library(wav_static STATIC ${lib_src})
+add_library(wav SHARED ${lib_src})
 
-add_library(wav STATIC ${lib_src})
-add_library(wav_so SHARED ${lib_src})
+
+target_link_libraries(wav
+        "-Wl,--whole-archive" #之后的库使用--whole-archive选项
+        ${lib_output_path}/libwavpack_static.a
+        "-Wl,--no-whole-archive")  #之后的库不使用--whole-archive选项
