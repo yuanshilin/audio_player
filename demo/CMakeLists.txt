@@ -16,7 +16,6 @@ set(EXAMPLE_APP_NAME "wav-examples")
 
 if (CMAKE_SYSTEM_NAME MATCHES "Android")
     # xxx: -flto can't be used on NDK with gnustl_shared
-    message(${ANDROID_STL})
     if (ANDROID_STL MATCHES "gnustl_shared")
         add_definitions("-Oz -g -DHAVE_NO_ATEXIT")
     else ()
