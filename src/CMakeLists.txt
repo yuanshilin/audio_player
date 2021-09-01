@@ -21,8 +21,10 @@ if (CMAKE_SYSTEM_NAME MATCHES "Android")
         add_definitions("-O3 -flto")
     endif ()
 
+
     add_definitions("-DANDROID")
     add_definitions("-Wno-unused-command-line-argument")
+    add_definitions("-fexceptions -frtti")
     #	add_definitions("-Wno-invalid-source-encoding")
     add_definitions("-fdata-sections -ffunction-sections")
     # string(APPEND CMAKE_CXX_FLAGS "-Qunused-arguments")
@@ -109,5 +111,10 @@ add_library(wav SHARED ${lib_src})
 
 target_link_libraries(wav
         "-Wl,--whole-archive" #之后的库使用--whole-archive选项
-        ${lib_output_path}/libwavpack_static.a
+        ${lib_output_path}/libwavpack.so
         "-Wl,--no-whole-archive")  #之后的库不使用--whole-archive选项
+
+#target_link_libraries(wav
+#        "-Wl,--whole-archive" #之后的库使用--whole-archive选项
+#        ${lib_output_path}/libwavpack_static.a
+#        "-Wl,--no-whole-archive")  #之后的库不使用--whole-archive选项

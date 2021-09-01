@@ -3,6 +3,8 @@
 #### 编译
 ```shell
 export ANDROID_NDK=~/Android/ndk/android-ndk-r23
+export ANDROID_NDK=~/Android/ndk/android-ndk-r21e
+
 mkdir android_build && cd android_build
 
 cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake \

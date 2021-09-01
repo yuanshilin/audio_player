@@ -70,8 +70,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${lib_output_path})
 # 设置动态库的输出目录
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${lib_output_path})
 
-#add_library(wavpack_so SHARED ${third_wavpack_src})
-add_library(wavpack_static STATIC ${third_wavpack_src})
+add_library(wavpack SHARED ${third_wavpack_src})
+#add_library(wavpack_static STATIC ${third_wavpack_src})
 
 
 #set_cxx_version(libwavpack)
@@ -98,18 +98,18 @@ if (WIN32)
     _disable_warning(4703)
 endif()
 
-target_include_directories(wavpack_static PRIVATE ${LIBNYQUIST_ROOT}/wavpack/include)
+#target_include_directories(wavpack_static PRIVATE ${LIBNYQUIST_ROOT}/wavpack/include)
 
 if (MSVC_IDE)
     set_target_properties(wavpack_static PROPERTIES IMPORT_PREFIX "../..")
 endif()
 
-set_target_properties(wavpack_static
-        PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-        )
+#set_target_properties(wavpack_static
+#        PROPERTIES
+#        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+#        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+#        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+#        )
 
 #set_target_properties(libwavpack PROPERTIES OUTPUT_NAME_DEBUG libwavpack_d)
 

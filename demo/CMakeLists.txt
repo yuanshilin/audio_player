@@ -16,12 +16,14 @@ set(EXAMPLE_APP_NAME "wav-examples")
 
 if (CMAKE_SYSTEM_NAME MATCHES "Android")
     # xxx: -flto can't be used on NDK with gnustl_shared
+    message(${ANDROID_STL})
     if (ANDROID_STL MATCHES "gnustl_shared")
         add_definitions("-Oz -g -DHAVE_NO_ATEXIT")
     else ()
         add_definitions("-O3 -flto")
     endif ()
 
+    add_definitions("-fexceptions")
     add_definitions("-DANDROID")
     add_definitions("-Wno-unused-command-line-argument")
     #	add_definitions("-Wno-invalid-source-encoding")
@@ -92,6 +94,12 @@ set(EXECUTABLE_OUTPUT_PATH ${exe_output_path})
 
 #
 #link_libraries(${lib_output_path}/libwav_static.a ${lib_output_path}/libwavpack_static.a)
-link_libraries(${lib_output_path}/libwav.so )
+
 
 add_executable(${EXAMPLE_APP_NAME} ${SRC})
+
+
+# 放在add_executable后面
+target_link_libraries(${EXAMPLE_APP_NAME}
+            ${lib_output_path}/libwavpack.so
+            ${lib_output_path}/libwav.so)
