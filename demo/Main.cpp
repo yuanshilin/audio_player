@@ -20,6 +20,19 @@
 
 using namespace nqr;
 
+
+
+
+template<typename ... Args>
+static std::string formatString(const std::string &format, Args ... args)
+{
+    auto size = std::snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
+    std::unique_ptr<char[]> buf(new char[size]);
+    std::snprintf(buf.get(), size, format.c_str(), args ...);
+    return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
+}
+
+
 int main(int argc, const char **argv) try {
 
 
@@ -32,77 +45,11 @@ int main(int argc, const char **argv) try {
         file = cli_arg;
 //        loader.Load(fileData.get(), cli_arg);
     } else {
-        // Circular libnyquist testing
-        //loader.Load(fileData.get(), "libnyquist_example_output.opus");
-
-        // 1-channel wave
-        //loader.Load(fileData.get(), "test_data/1ch/44100/8/test.wav");
-        //loader.Load(fileData.get(), "test_data/1ch/44100/16/test.wav");
-        //loader.Load(fileData.get(), "test_data/1ch/44100/24/test.wav");
-        //loader.Load(fileData.get(), "test_data/1ch/44100/32/test.wav");
-        //loader.Load(fileData.get(), "test_data/1ch/44100/64/test.wav");
-
-        // 2-channel wave
-        //loader.Load(fileData.get(), "test_data/2ch/44100/8/test.wav");
-        //loader.Load(fileData.get(), "test_data/2ch/44100/16/test.wav");
-        //loader.Load(fileData.get(), "test_data/2ch/44100/24/test.wav");
-        //loader.Load(fileData.get(), "test_data/2ch/44100/32/test.wav");
-        //loader.Load(fileData.get(), "test_data/2ch/44100/64/test.wav");
-
-        //loader.Load(fileData.get(), "test_data/ad_hoc/TestBeat_44_16_mono-ima4-reaper.wav");
-        //loader.Load(fileData.get(), "test_data/ad_hoc/TestBeat_44_16_stereo-ima4-reaper.wav");
-
-        // Multi-channel wave
-        //std::string file("/Users/frank/workspace/github/libnyquist/test_data/ad_hoc/6_channel_44k_16b.wav");
 #if  ANDROID
        file = std::string("/sdcard/7.1.wav");
 #else
-       file = std::string("/home/frank/media/7.1.wav");
+       file = std::string("/home/frank/mediafile/7.1.wav");
 #endif
-
-
-        // 1 + 2 channel ogg
-        //loader.Load(fileData.get(), "test_data/ad_hoc/LR_Stereo.ogg");
-        //loader.Load(fileData.get(), "test_data/ad_hoc/TestLaugh_44k.ogg");
-        //loader.Load(fileData.get(), "test_data/ad_hoc/TestBeat.ogg");
-        //loader.Load(fileData.get(), "test_data/ad_hoc/TestBeatMono.ogg");
-        //loader.Load(fileData.get(), "test_data/ad_hoc/BlockWoosh_Stereo.ogg");
-
-        // 1 + 2 channel flac
-        //loader.Load(fileData.get(), "test_data/ad_hoc/KittyPurr8_Stereo_Dithered.flac");
-        //loader.Load(fileData.get(), "test_data/ad_hoc/KittyPurr16_Stereo.flac");
-        //loader.Load(fileData.get(), "test_data/ad_hoc/KittyPurr16_Mono.flac");
-        //loader.Load(fileData.get(), "test_data/ad_hoc/KittyPurr24_Stereo.flac");
-
-        //auto memory = ReadFile("test_data/ad_hoc/KittyPurr24_Stereo.flac"); // broken
-        //loader.Load(fileData.get(), "flac", memory.buffer); // broken
-
-        // Single-channel opus
-        //loader.Load(fileData.get(), "test_data/ad_hoc/detodos.opus"); // "Firefox: From All, To All"
-
-        // 1 + 2 channel wavpack
-        //loader.Load(fileData.get(), "test_data/ad_hoc/TestBeat_Float32.wv");
-        //loader.Load(fileData.get(), "test_data/ad_hoc/TestBeat_Float32_Mono.wv");
-        //loader.Load(fileData.get(), "test_data/ad_hoc/TestBeat_Int16.wv");
-        //loader.Load(fileData.get(), "test_data/ad_hoc/TestBeat_Int24.wv");
-        //loader.Load(fileData.get(), "test_data/ad_hoc/TestBeat_Int32.wv");
-        //loader.Load(fileData.get(), "test_data/ad_hoc/TestBeat_Int24_Mono.wv");
-
-        // In-memory wavpack
-//        auto memory = ReadFile("test_data/ad_hoc/TestBeat_Float32.wv");
-//        loader.Load(fileData.get(), "wv", memory.buffer);
-
-        // 1 + 2 channel musepack
-        //loader.Load(fileData.get(), "test_data/ad_hoc/44_16_stereo.mpc");
-        //loader.Load(fileData.get(), "test_data/ad_hoc/44_16_mono.mpc");
-
-        // In-memory ogg
-        //auto memory = ReadFile("test_data/ad_hoc/BlockWoosh_Stereo.ogg");
-        //loader.Load(fileData.get(), "ogg", memory.buffer);
-
-        // In-memory Mp3
-        //auto memory = ReadFile("test_data/ad_hoc/acetylene.mp3");
-        //loader.Load(fileData.get(), "mp3", memory.buffer);
     }
 
 
@@ -154,18 +101,22 @@ int main(int argc, const char **argv) try {
         pDevice->Play(fileData->samples);
     }
 
-    // Test Opus Encoding
-    {
-//        // Resample
-//        std::vector<float> outputBuffer;
-//        std::cout << "Output Samples: " << outputBuffer.size() << std::endl;
-//
-//        outputBuffer.reserve(fileData->samples.size() * 2);
-//        linear_resample(fileData->sampleRate / 48000.0f, fileData->samples, outputBuffer, (uint32_t)fileData->samples.size());
+    std::string pcmFile = formatString("/home/frank/mediafile/audio_ch%d_rate%d_frame%d.pcm",
+                                         fileData->channelCount, fileData->sampleRate, fileData->frameSize);
 
-//        fileData->samples = outputBuffer;
-//        int encoderStatus = encode_opus_to_disk({ fileData->channelCount, PCM_FLT, DITHER_NONE }, fileData.get(), "libnyquist_example_output.opus");
-//        std::cout << "Encoder Status: " << encoderStatus << std::endl;
+
+    FILE* pFile = fopen(pcmFile.c_str(),"wb+");
+    if(nullptr == pFile) {
+        printf("open file:%s failed\n", pcmFile.c_str());
+        return -1;
+    }
+
+    printf("samples size:%d\n", fileData->samples.size());
+
+    auto ret = fwrite( &fileData->samples[0], 1 , fileData->samples.size()* sizeof(float ) , pFile );
+    if(ret < 0 ) {
+        printf("write file:%s failed\n",pcmFile.c_str());
+        return -1;
     }
 
     return EXIT_SUCCESS;
@@ -182,3 +133,7 @@ catch (const LoadBufferNotImplEx &e) {
 catch (const std::exception &e) {
     std::cerr << "Caught: " << e.what() << std::endl;
 }
+
+
+
+
